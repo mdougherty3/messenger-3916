@@ -30,6 +30,17 @@ router.get("/", async (req, res, next) => {
             )`),
           "latestMessageDate",
         ],
+        [
+          db.literal(`(
+                SELECT COUNT(*) 
+                FROM "messages" as "messageCount"
+                WHERE "messageCount"."conversationId" = "conversation"."id"
+                  AND ("user1"."id" = "messageCount"."senderId"
+                    OR "user2"."id" = "messageCount"."senderId")
+                  AND NOT "readStatus"
+            )`),
+          "unreadMessageCount",
+        ],
       ],
       order: [
         [db.literal('"latestMessageDate"'), "DESC"],
@@ -60,6 +71,7 @@ router.get("/", async (req, res, next) => {
           attributes: ["id", "username", "photoUrl"],
           required: false,
         },
+
       ],
     });
 
@@ -85,6 +97,7 @@ router.get("/", async (req, res, next) => {
 
       // set properties for notification count and latest message preview
       convoJSON.latestMessageText = convoJSON.messages.slice(-1)[0].text;
+      convoJSON.latestMessageId = convoJSON.messages.slice(-1)[0].id;
       conversations[i] = convoJSON;
     }
 

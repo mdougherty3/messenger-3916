@@ -1,5 +1,5 @@
 export const addMessageToStore = (state, payload) => {
-  const { message, sender } = payload;
+  const { message, sender, incrementUnreadCount } = payload;
   // if sender isn't null, that means the message needs to be put in a brand new convo
   if (sender !== null) {
     const newConvo = {
@@ -7,17 +7,29 @@ export const addMessageToStore = (state, payload) => {
       otherUser: sender,
       messages: [message],
       latestMessageDate: message.createdAt,
+      unreadMessageCount: 1,
     };
     newConvo.latestMessageText = message.text;
+    newConvo.latestMessageId = message.id;
     return [newConvo, ...state];
   }
 
   return state.map((convo) => {
     if (convo.id === message.conversationId) {
       const convoCopy = { ...convo };
+      // increment unread count if message was sent by other user
+      if (message.senderId === convo.otherUser.id) {
+        if (incrementUnreadCount) {
+          convoCopy.unreadMessageCount++;
+        } else {
+          message.readStatus = true;
+        }
+      }
       convoCopy.messages.push(message);
       convoCopy.latestMessageText = message.text;
+      convoCopy.latestMessageId = message.id;
       convoCopy.latestMessageDate = message.createdAt;
+
       return convoCopy;
     } else {
       return convo;
@@ -75,8 +87,36 @@ export const addNewConvoToStore = (state, recipientId, message) => {
       const convoCopy = { ...convo };
       convoCopy.id = message.conversationId;
       convoCopy.messages.push(message);
+      convoCopy.unreadMessageCount = 0;
       convoCopy.latestMessageText = message.text;
+      convoCopy.latestMessageId = message.id;
       convoCopy.latestMessageDate = message.createdAt;
+      return convoCopy;
+    } else {
+      return convo;
+    }
+  });
+};
+
+export const setConvoReadInStore = (
+  state,
+  convoId,
+  currentUserId,
+  readByUserId
+) => {
+  return state.map((convo) => {
+    if (convo.id === convoId) {
+      const convoCopy = { ...convo };
+      convoCopy.messages.forEach((msg) => {
+        if (!msg.readStatus) {
+          if (msg.senderId !== readByUserId) {
+            msg.readStatus = true;
+            if (readByUserId === currentUserId) {
+              convoCopy.unreadMessageCount--;
+            }
+          }
+        }
+      });
       return convoCopy;
     } else {
       return convo;

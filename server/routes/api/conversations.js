@@ -30,6 +30,17 @@ router.get("/", async (req, res, next) => {
             )`),
           "latestMessageDate",
         ],
+        [
+          db.literal(`(
+                SELECT COUNT(*) 
+                FROM "messages" as "messageCount"
+                WHERE "messageCount"."conversationId" = "conversation"."id"
+                  AND ("user1"."id" = "messageCount"."senderId"
+                    OR "user2"."id" = "messageCount"."senderId")
+                  AND NOT "readStatus"
+            )`),
+          "unreadMessageCount",
+        ],
       ],
       order: [
         [db.literal('"latestMessageDate"'), "DESC"],
@@ -85,10 +96,38 @@ router.get("/", async (req, res, next) => {
 
       // set properties for notification count and latest message preview
       convoJSON.latestMessageText = convoJSON.messages.slice(-1)[0].text;
+      convoJSON.latestMessageId = convoJSON.messages.slice(-1)[0].id;
       conversations[i] = convoJSON;
     }
 
     res.json(conversations);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch("/markRead/", async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+
+    const { convoId, otherUserId } = req.body;
+
+    // mark all convo messages matching other user id as read
+    await Message.update(
+      {
+        readStatus: true,
+      },
+      {
+        where: {
+          senderId: otherUserId,
+          conversationId: convoId,
+          readStatus: false,
+        },
+      }
+    );
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }

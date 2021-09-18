@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  setConvoRead,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -88,6 +89,7 @@ const sendMessage = (data, body) => {
     message: data.message,
     recipientId: body.recipientId,
     sender: data.sender,
+    currentUser: data.currentUser,
   });
 };
 
@@ -100,7 +102,7 @@ export const postMessage = (body) => async (dispatch) => {
     if (!body.conversationId) {
       dispatch(addConversation(body.recipientId, data.message));
     } else {
-      dispatch(setNewMessage(data.message));
+      dispatch(setNewMessage(data.message, null, false));
     }
 
     sendMessage(data, body);
@@ -113,6 +115,38 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   try {
     const { data } = await axios.get(`/api/users/${searchTerm}`);
     dispatch(setSearchedUsers(data));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const patchConvoRead = async (convoId, otherUserId) => {
+  try {
+    const { data } = await axios.patch("/api/conversations/markRead/", {
+      convoId: convoId,
+      otherUserId: otherUserId,
+    });
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const sendConvoReadReceipt = (convoId, readByUserId) => {
+  socket.emit("convo-read", convoId, readByUserId);
+};
+
+export const markConvoRead = (convo, user) => async (dispatch) => {
+  try {
+    const convoId = convo.id;
+    const otherUserId = convo.otherUser.id;
+    await patchConvoRead(convoId, otherUserId);
+
+    if (convo.unreadMessageCount > 0) {
+      dispatch(setConvoRead(convoId, user.id, user.id));
+    }
+
+    sendConvoReadReceipt(convoId, user.id);
   } catch (error) {
     console.error(error);
   }

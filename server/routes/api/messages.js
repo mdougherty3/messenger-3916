@@ -43,24 +43,4 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.patch("/:id/", async (req, res, next) => {
-  try {
-    const messageId = req.params.id;
-    const { changes } = req.body;
-    const message = await Message.findByPk(messageId);
-
-    let fieldsToUpdate = [];
-    Object.keys(changes).forEach((field) => {
-      message[field] = changes[field];
-      fieldsToUpdate.push(field);
-    });
-
-    await message.save({ fields: fieldsToUpdate });
-
-    res.send(message);
-  } catch (error) {
-    next(error);
-  }
-});
-
 module.exports = router;

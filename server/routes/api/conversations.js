@@ -71,7 +71,6 @@ router.get("/", async (req, res, next) => {
           attributes: ["id", "username", "photoUrl"],
           required: false,
         },
-
       ],
     });
 
@@ -102,6 +101,33 @@ router.get("/", async (req, res, next) => {
     }
 
     res.json(conversations);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch("/markRead/", async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+
+    const { convoId, otherUserId } = req.body;
+
+    // mark all convo messages matching other user id as read
+    await Message.update(
+      {
+        readStatus: true,
+      },
+      {
+        where: {
+          senderId: otherUserId,
+          conversationId: convoId,
+          readStatus: false,
+        },
+      }
+    );
+    res.sendStatus(204);
   } catch (error) {
     next(error);
   }

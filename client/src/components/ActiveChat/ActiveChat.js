@@ -58,8 +58,11 @@ const mapStateToProps = (state) => {
     conversation:
       state.conversations &&
       state.conversations.find(
+        // if convoId is undefined since it is a fake convo, match on user id
         (conversation) =>
-          conversation.otherUser.username === state.activeConversation
+          (conversation.id &&
+            conversation.id === state.activeConversation.convoId) ||
+          conversation.otherUser.id === state.activeConversation.otherUserId
       ),
   };
 };

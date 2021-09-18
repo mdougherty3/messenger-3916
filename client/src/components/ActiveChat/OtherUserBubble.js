@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box, Typography, Avatar } from "@material-ui/core";
-import { connect } from "react-redux";
-import { markMessageRead } from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -35,11 +33,7 @@ const useStyles = makeStyles(() => ({
 
 const OtherUserBubble = (props) => {
   const classes = useStyles();
-  const { text, time, otherUser, message, markMessageRead } = props;
-
-  useEffect(() => {
-    markMessageRead(message);
-  });
+  const { text, time, otherUser } = props;
 
   return (
     <Box className={classes.root}>
@@ -60,12 +54,4 @@ const OtherUserBubble = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    markMessageRead: (messageId) => {
-      dispatch(markMessageRead(messageId));
-    },
-  };
-};
-
-export default connect(null, mapDispatchToProps)(OtherUserBubble);
+export default OtherUserBubble;

@@ -5,7 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
-  setMessageRead,
+  setConvoRead,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -89,6 +89,7 @@ const sendMessage = (data, body) => {
     message: data.message,
     recipientId: body.recipientId,
     sender: data.sender,
+    currentUser: data.currentUser,
   });
 };
 
@@ -101,7 +102,7 @@ export const postMessage = (body) => async (dispatch) => {
     if (!body.conversationId) {
       dispatch(addConversation(body.recipientId, data.message));
     } else {
-      dispatch(setNewMessage(data.message));
+      dispatch(setNewMessage(data.message, null, false));
     }
 
     sendMessage(data, body);
@@ -119,26 +120,33 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   }
 };
 
-const patchExistingMessage = async (message) => {
-  const { data } = await axios.patch(`/api/messages/${message.id}`, {
-    changes: {
-      readStatus: true,
-    },
-  });
-  return data;
-};
-
-const sendMessageReadReceipt = (message) => {
-  socket.emit("message-read", message);
-};
-
-export const markMessageRead = (message) => async (dispatch) => {
+const patchConvoRead = async (convoId, otherUserId) => {
   try {
-    if (!message.readStatus) {
-      await patchExistingMessage(message);
-      dispatch(setMessageRead(message));
-      sendMessageReadReceipt(message);
+    const { data } = await axios.patch("/api/conversations/markRead/", {
+      convoId: convoId,
+      otherUserId: otherUserId,
+    });
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const sendConvoReadReceipt = (convoId, readByUserId) => {
+  socket.emit("convo-read", convoId, readByUserId);
+};
+
+export const markConvoRead = (convo, user) => async (dispatch) => {
+  try {
+    const convoId = convo.id;
+    const otherUserId = convo.otherUser.id;
+    await patchConvoRead(convoId, otherUserId);
+
+    if (convo.unreadMessageCount > 0) {
+      dispatch(setConvoRead(convoId, user.id, user.id));
     }
+
+    sendConvoReadReceipt(convoId, user.id);
   } catch (error) {
     console.error(error);
   }

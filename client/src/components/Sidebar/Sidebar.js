@@ -22,6 +22,7 @@ const useStyles = makeStyles(() => ({
 const Sidebar = (props) => {
   const classes = useStyles();
   const conversations = props.conversations || [];
+  const { user } = props;
   const { handleChange, searchTerm } = props;
 
   return (
@@ -40,6 +41,7 @@ const Sidebar = (props) => {
               <Chat
                 conversation={conversation}
                 key={conversation.otherUser.username}
+                user={user}
               />
             );
           }),
@@ -51,6 +53,7 @@ const Sidebar = (props) => {
 const mapStateToProps = (state) => {
   return {
     conversations: state.conversations,
+    user: state.user,
   };
 };
 

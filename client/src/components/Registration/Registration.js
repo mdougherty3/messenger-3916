@@ -4,7 +4,7 @@ import { useHistory, Redirect } from "react-router-dom";
 import { Grid, Box, Typography, Button } from "@material-ui/core";
 import bgImage from "../../assets/images/bg-img.png";
 import bubble from "../../assets/images/bubble.svg";
-import { LoginForm, SignupForm } from "./index";
+import { Form } from "./index";
 import useSharedClasses from "./styles";
 
 const Registration = (props) => {
@@ -70,7 +70,7 @@ const Registration = (props) => {
           )}
         </Grid>
 
-        {(signupPage && <SignupForm />) || <LoginForm />}
+        <Form signupPage={signupPage} />
       </Box>
     </Grid>
   );

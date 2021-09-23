@@ -47,10 +47,10 @@ export default makeStyles(() => ({
   },
   loginFormContainer: {
     position: "absolute",
-    top: "27%",
+    top: "24%",
     maxWidth: "400px",
-    paddingLeft: "1rem",
-    paddingRight: "1rem",
+    paddingLeft: "2rem",
+    paddingRight: "2rem",
     left: "50%",
     transform: "translate(-50%)",
   },

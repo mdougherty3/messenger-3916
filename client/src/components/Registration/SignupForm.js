@@ -34,7 +34,7 @@ const SignupForm = (props) => {
         alignItems="center"
         className={classes.loginFormContainer}
       >
-        <Typography className={classes.formHeading}>Welcome Back!</Typography>
+        <Typography className={classes.formHeading}>Create an account.</Typography>
         <TextField
           aria-label="username"
           label="Username"

@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
-export default makeStyles(() => ({
+export default makeStyles((theme) => ({
   root: {
     height: "100vh",
   },
@@ -19,16 +19,11 @@ export default makeStyles(() => ({
     width: "100%",
   },
   topContextMenuContainer: {
-    padding: "2rem",
-  },
-  topContextMenuText: {
-    color: "#9CADC8",
-    fontSize: "0.9rem",
+    padding: theme.spacing(4),
   },
   leftContainerHeading: {
-    marginTop: "2.5rem",
-    color: "white",
-    fontSize: "2rem",
+    marginTop: theme.spacing(5),
+    color: "#FFF",
   },
   bgImage: {
     zIndex: -1,
@@ -37,34 +32,32 @@ export default makeStyles(() => ({
   },
   largeBtn: {
     width: "170px",
-    paddingTop: "16px",
-    paddingBottom: "16px",
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
   },
   registerBtn: {
-    backgroundColor: "#ffffff",
-    marginLeft: "1.5rem",
-    color: "#3A8DFF",
+    backgroundColor: "#FFF",
+    marginLeft: theme.spacing(3),
+    color: theme.palette.primary.main,
   },
   loginFormContainer: {
     position: "absolute",
     top: "24%",
     maxWidth: "400px",
-    paddingLeft: "2rem",
-    paddingRight: "2rem",
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
     left: "50%",
     transform: "translate(-50%)",
   },
   loginBtn: {
-    marginTop: "2.5rem",
+    marginTop: theme.spacing(5),
   },
   formHeading: {
-    fontSize: "2rem",
     fontWeight: "bold",
     marginRight: "auto",
-    marginBottom: "1rem",
+    marginBottom: theme.spacing(2),
   },
   forgotPassLink: {
-    fontSize: "0.8rem",
     fontWeight: "bold",
   },
 }));

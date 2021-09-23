@@ -26,7 +26,7 @@ const Registration = (props) => {
       >
         <Box className={classes.leftTextContainer} sx={{ textAlign: "center" }}>
           <img src={bubble} alt="Chat Bubble" />
-          <Typography className={classes.leftContainerHeading}>
+          <Typography className={classes.leftContainerHeading} variant="h4" component="p">
             Converse with anyone <br />
             with any language
           </Typography>
@@ -43,7 +43,7 @@ const Registration = (props) => {
         >
           {(signupPage && (
             <>
-              <Typography className={classes.topContextMenuText}>
+              <Typography variant="body2" color="secondary">
                 Already have an account?
               </Typography>
               <Button
@@ -56,7 +56,7 @@ const Registration = (props) => {
             </>
           )) || (
             <>
-              <Typography className={classes.topContextMenuText}>
+              <Typography variant="body2" color="secondary">
                 Don't have an account?
               </Typography>
               <Button

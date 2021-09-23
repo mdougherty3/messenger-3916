@@ -40,7 +40,7 @@ const Form = (props) => {
         alignItems="center"
         className={classes.loginFormContainer}
       >
-        <Typography className={classes.formHeading}>
+        <Typography className={classes.formHeading} variant="h4" component="p">
           {(signupPage && "Create an account.") || "Welcome Back!"}
         </Typography>
 
@@ -80,7 +80,7 @@ const Form = (props) => {
             endAdornment:
               (!signupPage && (
                 <InputAdornment position="end">
-                  <Link href="#" className={classes.forgotPassLink}>
+                  <Link href="#" className={classes.forgotPassLink} variant="body2">
                     Forgot?
                   </Link>
                 </InputAdornment>
